@@ -37,7 +37,7 @@ def evaluate_model(model, X_train, y_train, X_test, y_test, name="Model"):
 # ==============================================================
 # Load and Clean Data
 # ==============================================================
-ai4i_data = pd.read_csv("ai4i2020.csv")
+ai4i_data = pd.read_csv("data/ai4i2020.csv")
 
 # print(ai4i_data.columns)
 
@@ -82,7 +82,7 @@ df.columns = (
 )
 
 #  check to modifued dataframe
-# print(df.head())
+print(df.head())
 
 # ==============================================================
 #  Train/Test Split
