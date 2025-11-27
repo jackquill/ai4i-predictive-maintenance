@@ -36,7 +36,9 @@ def train_on_dataset(df, dataset_name):
 
     results = []
     for name, model in models.items():
-        auc = evaluate_model(model, X_train, y_train, X_test, y_test, name)
+        #auc = evaluate_model(model, X_train, y_train, X_test, y_test, name)
+        auc = evaluate_model(model, X_train, y_train, X_test, y_test, name, dataset_name)
+
         results.append({"Dataset": dataset_name, "Model": name, "ROC_AUC": auc})
 
     save_metrics(results, f"metrics_{dataset_name}.csv")
