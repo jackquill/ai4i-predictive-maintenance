@@ -1,4 +1,0 @@
-Dataset,Model,ROC_AUC
-clean,RandomForest,0.9647993303967737
-clean,GradientBoosting,0.9806854978483078
-clean,XGBoost,0.9779250754571817
