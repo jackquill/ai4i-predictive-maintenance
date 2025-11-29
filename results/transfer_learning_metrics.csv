@@ -1,13 +1,13 @@
-TL Experiment,ROC_AUC,Model
-RandomForest Clean→Irregular — eval source,0.9601746717506912,RandomForest
-RandomForest Clean→Irregular — eval target,0.9531146889286425,RandomForest
-RandomForest Irregular→Clean — eval source,0.9337308686145896,RandomForest
-RandomForest Irregular→Clean — eval target,0.9744164221882159,RandomForest
-GradientBoosting Clean→Irregular — eval source,0.977481209682192,GradientBoosting
-GradientBoosting Clean→Irregular — eval target,0.937276883323395,GradientBoosting
-GradientBoosting Irregular→Clean — eval source,0.926618962432916,GradientBoosting
-GradientBoosting Irregular→Clean — eval target,0.980507951538312,GradientBoosting
-XGBoost Clean→Irregular — eval source,0.9722605027096949,XGBoost
-XGBoost Clean→Irregular — eval target,0.938274696879348,XGBoost
-XGBoost Irregular→Clean — eval source,0.936831643808388,XGBoost
-XGBoost Irregular→Clean — eval target,0.9788973528690639,XGBoost
+Experiment,ROC_AUC,Model
+Clean→Unclean — eval source,0.9623813187463539,RandomForest
+Clean→Unclean — eval target,0.9464758497316637,RandomForest
+Unclean→Clean — eval source,0.9487656529516996,RandomForest
+Unclean→Clean — eval target,0.9746954235324952,RandomForest
+Clean→Unclean — eval source,0.9744544678260723,GradientBoosting
+Clean→Unclean — eval target,0.9382269926455973,GradientBoosting
+Unclean→Clean — eval source,0.9250725501888293,GradientBoosting
+Unclean→Clean — eval target,0.9807742710033057,GradientBoosting
+Clean→Unclean — eval source,0.9508281267173377,XGBoost
+Clean→Unclean — eval target,0.9385251441065395,XGBoost
+Unclean→Clean — eval source,0.9331266149870803,XGBoost
+Unclean→Clean — eval target,0.9808588168652086,XGBoost
