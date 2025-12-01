@@ -1,0 +1,13 @@
+Experiment,ROC_AUC,Model
+Clean→Unclean — eval source,0.9585160151016929,RandomForest
+Clean→Unclean — eval target,0.9517590019926468,RandomForest
+Unclean→Clean — eval source,0.920223962280037,RandomForest
+Unclean→Clean — eval target,0.9587291438314458,RandomForest
+Clean→Unclean — eval source,0.9758555596151504,GradientBoosting
+Clean→Unclean — eval target,0.9310607336308271,GradientBoosting
+Unclean→Clean — eval source,0.9266649827397491,GradientBoosting
+Unclean→Clean — eval target,0.9742837352332236,GradientBoosting
+Clean→Unclean — eval source,0.9554408720009744,XGBoost
+Clean→Unclean — eval target,0.93048539193399,XGBoost
+Unclean→Clean — eval source,0.9118815076759001,XGBoost
+Unclean→Clean — eval target,0.9603808914870298,XGBoost

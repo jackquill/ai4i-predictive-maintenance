@@ -1,6 +1,7 @@
 from src.data_prep import load_and_engineer_data
 from src.train_models import train_on_dataset
 from src.comparison import cross_dataset_pair_test 
+from src.transfer_learning import run_transfer_learning
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
 import pandas as pd
@@ -57,6 +58,9 @@ def main():
     print("\n=== Cross-Dataset Results (All Models) ===")
     print(final_results)
     final_results.to_csv("results/cross_dataset_metrics.csv", index=False)
+
+    print("\n=== Running Transfer Learning Experiments ===")
+    run_transfer_learning(models, clean_df, irregular_df)
 
 
 if __name__ == "__main__":
