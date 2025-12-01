@@ -38,23 +38,34 @@ def build_paired_splits(clean_df, unclean_df):
     merged = merge_clean_unclean(clean_df, unclean_df)
     X_clean, y_clean, X_unclean, y_unclean = split_clean_unclean_pairs(merged)
 
-    # split by product_id (prevents leakage)
     ids = merged["product_id"].unique()
-    train_ids, test_ids = train_test_split(ids, test_size=0.2, random_state=42)
+
+    pretrain_ids, other_ids = train_test_split(
+        ids, test_size=0.4, random_state=42
+    )
+    finetune_ids, test_ids = train_test_split(
+        other_ids, test_size=0.5, random_state=42
+    )
 
     def pick(ids_subset, X, y):
         mask = merged["product_id"].isin(ids_subset)
         return X[mask], y[mask]
 
-    clean_train, clean_y_train = pick(train_ids, X_clean, y_clean)
-    clean_test, clean_y_test = pick(test_ids, X_clean, y_clean)
+    # pretraining
+    clean_pre, clean_y_pre = pick(pretrain_ids, X_clean, y_clean)
+    unclean_pre, unclean_y_pre = pick(pretrain_ids, X_unclean, y_unclean)
 
-    unclean_train, unclean_y_train = pick(train_ids, X_unclean, y_unclean)
+    # fine-tuning
+    clean_ft, clean_y_ft = pick(finetune_ids, X_clean, y_clean)
+    unclean_ft, unclean_y_ft = pick(finetune_ids, X_unclean, y_unclean)
+
+    # testing
+    clean_test, clean_y_test = pick(test_ids, X_clean, y_clean)
     unclean_test, unclean_y_test = pick(test_ids, X_unclean, y_unclean)
 
     return (
-        clean_train, clean_y_train, clean_test, clean_y_test,
-        unclean_train, unclean_y_train, unclean_test, unclean_y_test
+        clean_pre, clean_y_pre, clean_ft, clean_y_ft, clean_test, clean_y_test,
+        unclean_pre, unclean_y_pre, unclean_ft, unclean_y_ft, unclean_test, unclean_y_test
     )
 
 
@@ -63,33 +74,42 @@ def build_paired_splits(clean_df, unclean_df):
 # --------------------------------------------------------------
 def run_tl_direction(model, direction, clean_df, unclean_df):
     (
-        clean_train, clean_y_train, clean_test, clean_y_test,
-        unclean_train, unclean_y_train, unclean_test, unclean_y_test
+        clean_pre, clean_y_pre, 
+        clean_ft, clean_y_ft, 
+        clean_test, clean_y_test,
+        unclean_pre, unclean_y_pre, 
+        unclean_ft, unclean_y_ft,
+        unclean_test, unclean_y_test
     ) = build_paired_splits(clean_df, unclean_df)
 
+    # Set the correct ordering depending on direction
     if direction == "Clean→Unclean":
-        X_pre, y_pre = clean_train, clean_y_train
-        X_ft, y_ft = unclean_train, unclean_y_train
+        X_pre, y_pre = clean_pre, clean_y_pre
+        X_ft, y_ft = unclean_ft, unclean_y_ft
 
-        X_pre_test, y_pre_test = clean_test, clean_y_test
-        X_ft_test, y_ft_test = unclean_test, unclean_y_test
+        X_test_source, y_test_source = clean_test, clean_y_test
+        X_test_target, y_test_target = unclean_test, unclean_y_test
 
     else:  # "Unclean→Clean"
-        X_pre, y_pre = unclean_train, unclean_y_train
-        X_ft, y_ft = clean_train, clean_y_train
+        X_pre, y_pre = unclean_pre, unclean_y_pre
+        X_ft, y_ft = clean_ft, clean_y_ft
 
-        X_pre_test, y_pre_test = unclean_test, unclean_y_test
-        X_ft_test, y_ft_test = clean_test, clean_y_test
+        X_test_source, y_test_source = unclean_test, unclean_y_test
+        X_test_target, y_test_target = clean_test, clean_y_test
 
-    # train → finetune
+    # ---- TRAINING PHASES ----
     model = sequential_train(model, X_pre, y_pre, X_ft, y_ft)
 
-    # align columns for evaluation
-    X_pre_test, X_ft_test = align_columns(X_pre_test, X_ft_test)
+    # ---- ALIGN COLUMNS ----
+    X_test_source, X_test_target = align_columns(X_test_source, X_test_target)
 
-    # evaluate on both source and target test sets
-    auc_source = roc_auc_score(y_pre_test, model.predict_proba(X_pre_test)[:, 1])
-    auc_target = roc_auc_score(y_ft_test, model.predict_proba(X_ft_test)[:, 1])
+    # ---- EVALUATION ----
+    auc_source = roc_auc_score(
+        y_test_source, model.predict_proba(X_test_source)[:, 1]
+    )
+    auc_target = roc_auc_score(
+        y_test_target, model.predict_proba(X_test_target)[:, 1]
+    )
 
     print(f"\n=== Transfer Learning ({direction}) ===")
     print(f"Eval Source Dataset: ROC-AUC = {auc_source:.4f}")
