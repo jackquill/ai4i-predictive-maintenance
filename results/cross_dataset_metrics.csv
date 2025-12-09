@@ -1,0 +1,7 @@
+Experiment,ROC_AUC,Model
+Train Clean -> Test Unclean (Paired Split),0.9360922281852515,RandomForest
+Train Unclean -> Test Clean (Paired Split),0.9596843057516549,RandomForest
+Train Clean -> Test Unclean (Paired Split),0.9263883919697873,GradientBoosting
+Train Unclean -> Test Clean (Paired Split),0.9774558459236213,GradientBoosting
+Train Clean -> Test Unclean (Paired Split),0.930149075730471,XGBoost
+Train Unclean -> Test Clean (Paired Split),0.947987385757404,XGBoost
